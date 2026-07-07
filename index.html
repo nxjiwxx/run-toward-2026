@@ -50,8 +50,10 @@
   #retryBtn svg { width:27px; height:27px; display:block; }
   @media (max-width: 768px), (pointer: coarse) and (max-width: 1024px) {
     #stage { width:100vw; max-width:none; }
-    #retryBtn { width:26px; height:21px; }
-    #retryBtn svg { width:14px; height:14px; }
+    /* keep PC button shape/ratio, just scale to 50% */
+    #retryBtn { transform:translate(-50%, 0) scale(0.5); transform-origin:center top; }
+    #retryBtn:hover { transform:translate(-50%, -2px) scale(0.5); }
+    #retryBtn:active { transform:translate(-50%, 0) scale(0.5); }
   }
 </style>
 </head>
@@ -107,7 +109,10 @@ function stopBgm(){ bgm.pause(); bgm.currentTime=0; }
 function playSfx(sfx){ sfx.currentTime=0; sfx.play().catch(()=>{}); }
 
 // ---------- Config ----------
-const CW=900, CH=300;
+const IS_MOBILE = window.matchMedia('(max-width: 768px), ((pointer: coarse) and (max-width: 1024px))').matches;
+const CW = IS_MOBILE ? 480 : 900, CH = 300;
+const UI_FONT = IS_MOBILE ? 11 : 16;         // title & score size
+const TITLE_BIG = IS_MOBILE ? 20 : 28;       // start-screen title size
 const GROUND_OVERLAP=10;
 const START_SPEED=6.5, MAX_SPEED=13.5, SPEED_INC=0.0011;
 const GRAVITY=0.62;
@@ -135,6 +140,7 @@ for(const k in ASSETS){
 }
 
 const canvas=document.getElementById('game');
+canvas.width = CW; canvas.height = CH;
 const ctx=canvas.getContext('2d');
 ctx.imageSmoothingEnabled=false;
 const retryBtn=document.getElementById('retryBtn');
@@ -285,7 +291,7 @@ function drawObstacles(){
   }
 }
 function drawScore(){
-  ctx.fillStyle='#777';ctx.font='16px "Press Start 2P", monospace';ctx.textAlign='right';
+  ctx.fillStyle='#777';ctx.font=UI_FONT+'px "Press Start 2P", monospace';ctx.textAlign='right';
   const s=String(Math.floor(score)).padStart(5,'0');
   const hiVal=cleared?best:Math.floor(totalScore+score);
   ctx.fillText('HI '+String(hiVal).padStart(5,'0')+'   '+s,CW-24,38);
@@ -296,10 +302,10 @@ const TITLE_LETTERS=TITLE_TEXT.replace(/ /g,'').length;
 function drawTitle(){
   if(!started&&!gameOver&&!gameClear){
     ctx.fillStyle='#E0312B';ctx.textAlign='center';
-    ctx.font='28px "Press Start 2P", monospace';
+    ctx.font=TITLE_BIG+'px "Press Start 2P", monospace';
     ctx.fillText(TITLE_TEXT,CW/2,CH/2-24);ctx.textAlign='left';return;
   }
-  ctx.font='16px "Press Start 2P", monospace';ctx.textAlign='left';
+  ctx.font=UI_FONT+'px "Press Start 2P", monospace';ctx.textAlign='left';
   const litCount=cleared?TITLE_LETTERS:Math.floor(Math.min(1,(totalScore+score)/CLEAR_SCORE)*TITLE_LETTERS);
   let x=24,li=0;
   for(const ch of TITLE_TEXT){
