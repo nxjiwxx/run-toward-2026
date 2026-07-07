@@ -51,9 +51,9 @@
   @media (max-width: 768px), (pointer: coarse) and (max-width: 1024px) {
     #stage { width:100vw; max-width:none; }
     /* keep PC button shape/ratio, just scale to 50% */
-    #retryBtn { transform:translate(-50%, 0) scale(0.5); transform-origin:center top; }
-    #retryBtn:hover { transform:translate(-50%, -2px) scale(0.5); }
-    #retryBtn:active { transform:translate(-50%, 0) scale(0.5); }
+    #retryBtn { transform:translate(-50%, 0) scale(0.6); transform-origin:center top; }
+    #retryBtn:hover { transform:translate(-50%, -2px) scale(0.6); }
+    #retryBtn:active { transform:translate(-50%, 0) scale(0.6); }
   }
 </style>
 </head>
@@ -178,12 +178,12 @@ function jump(){
 window.addEventListener('keydown', e=>{
   if(e.code==='Space'||e.code==='ArrowUp'){ e.preventDefault(); jump(); }
 });
-const stage=document.getElementById('stage');
-stage.addEventListener('touchstart', e=>{
+// jump on touch/click anywhere on the page (except the retry button)
+document.addEventListener('touchstart', e=>{
   if(e.target===retryBtn||retryBtn.contains(e.target)) return;
   e.preventDefault(); jump();
 },{passive:false});
-stage.addEventListener('mousedown', e=>{
+document.addEventListener('mousedown', e=>{
   if(e.target===retryBtn||retryBtn.contains(e.target)) return;
   e.preventDefault(); jump();
 });
