@@ -151,9 +151,10 @@ const RUN_FRAME_MS=300;
 const FLY_SEQ=['FLY_1','FLY_2','FLY_1','FLY_2'];
 
 // ---------- Score ----------
-let cleared=localStorage.getItem('run2026_cleared')==='1';
-let totalScore=+(localStorage.getItem('run2026_total')||0);
-let best=+(localStorage.getItem('run2026_best')||0);
+// session-only state: refreshing the page starts completely fresh
+let cleared=false;
+let totalScore=0;
+let best=0;
 
 let speed,score,gameOver,gameClear,started;
 let horse,obstacles,spawnTimer,groundX;
@@ -222,8 +223,6 @@ function update(dt){
 
   if(!cleared&&totalScore+score>=CLEAR_SCORE){
     gameClear=true; cleared=true; totalScore=0;
-    localStorage.setItem('run2026_cleared','1');
-    localStorage.setItem('run2026_total','0');
     stopBgm(); playSfx(sfxStart);
     retryBtn.style.display='flex';
     return;
@@ -268,8 +267,8 @@ function rectHit(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h>b.y;
 function doGameOver(){
   gameOver=true;
   const runScore=Math.floor(score);
-  if(!cleared){totalScore+=runScore;localStorage.setItem('run2026_total',totalScore);}
-  else{if(runScore>best){best=runScore;localStorage.setItem('run2026_best',best);}}
+  if(!cleared){totalScore+=runScore;}
+  else{if(runScore>best){best=runScore;}}
   stopBgm(); playSfx(sfxDie);
   retryBtn.style.display='flex';
 }
